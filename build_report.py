@@ -11,8 +11,9 @@ import json
 import os
 from datetime import datetime
 
-DATA_DIR = "/Users/mayk/LithuaniaBESS/data"
-OUT_DIR = "/Users/mayk/LithuaniaBESS"
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(_SCRIPT_DIR, "data")
+OUT_DIR = _SCRIPT_DIR
 
 # ============================================================
 # 1. Load all ENTSO-E data
@@ -388,7 +389,7 @@ bess_energy = [0, 200, 200, 300, 700, 1200, 2000, 3000, 4000, 4200, 4500]
 fossil_mw = [1800, 1800, 1800, 1800, 1800, 1600, 1500, 1400, 1200, 1000, 900]
 
 # BESS saturation
-bess_revenue = [0, 0, 0, 98, 108, 120, 114, 101, 90, 79, 72]
+bess_revenue = [0, 0, 0, 75, 572, 387, 272, 220, 194, 182, 170]
 bess_saturation_pct = [0, 10, 10, 12, 25, 36, 52, 63, 67, 67, 68]
 
 # Negative price hours real
@@ -554,8 +555,53 @@ html = f"""<!DOCTYPE html>
     </div>
 </div>
 
+<!-- ========== REVENUE PROJECTION HEADLINE ========== -->
+<div class="section-divider"><h2>1. BESS Revenue Projection (2h System)</h2></div>
+
+<div class="grid">
+    <div class="card card-full">
+        <div class="highlight-box">
+            <h3 style="color:#856404; margin-top:0;">Window of Opportunity: 2025—2027</h3>
+            <p>Projects operational by 2025-2026 capture extraordinary revenues of ~€390-570/kW/yr driven by post-BRELL scarcity pricing. After 2027, expect 55-70% revenue compression as 1,200+ MW BESS pipeline enters the market.</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="card card-full">
+        <h2>Multi-Market Revenue by Source (EUR/kW/yr, 2h BESS)</h2>
+        <div id="chart_revenue_stacked" style="width:100%; min-height:450px;"></div>
+    </div>
+</div>
+
+<div class="grid">
+    <div class="card">
+        <h2>Revenue Projection (EUR/kW/yr, 2h system)</h2>
+        <p style="font-size:0.85em; color:#666; margin-top:0">Multi-market combined (aFRR 40%, FCR 20%, DA 25%, mFRR 5%, Imbalance 10%).</p>
+        <table>
+            <tr><th>Year</th><th>2024</th><th>2025</th><th>2026E</th><th>2027E</th><th>2028E</th><th>2029E</th><th>2030E</th></tr>
+            <tr><td>EUR/MW/yr</td><td>74,680</td><td>571,719</td><td>387,309</td><td>272,453</td><td>220,099</td><td>193,922</td><td>182,182</td></tr>
+            <tr style="font-weight:bold; background:#D4EDDA"><td>EUR/kW/yr</td><td>75</td><td>572</td><td>387</td><td>272</td><td>220</td><td>194</td><td>182</td></tr>
+            <tr><td>Compression</td><td>100%</td><td>100%</td><td>65%</td><td>45%</td><td>35%</td><td>30%</td><td>28%</td></tr>
+            <tr><td>BESS MW</td><td>250</td><td>454</td><td>700</td><td>1,200</td><td>1,500</td><td>1,800</td><td>2,000</td></tr>
+        </table>
+    </div>
+    <div class="card">
+        <h2>Revenue Composition Shift</h2>
+        <table>
+            <tr><th>Stream</th><th>2024</th><th>2025</th><th>2026E</th><th>2027E</th><th>2028E</th><th>2030E</th></tr>
+            <tr><td>DA Arbitrage</td><td>31%</td><td>5%</td><td>6%</td><td>7%</td><td>7%</td><td>8%</td></tr>
+            <tr><td>aFRR</td><td>8%</td><td>58%</td><td>56%</td><td>54%</td><td>54%</td><td>54%</td></tr>
+            <tr><td>FCR</td><td>0%</td><td>9%</td><td>10%</td><td>11%</td><td>12%</td><td>10%</td></tr>
+            <tr><td>mFRR</td><td>41%</td><td>25%</td><td>25%</td><td>24%</td><td>23%</td><td>24%</td></tr>
+            <tr><td>Imbalance</td><td>20%</td><td>3%</td><td>3%</td><td>4%</td><td>4%</td><td>5%</td></tr>
+        </table>
+        <p style="font-size:0.85em; color:#666; margin-top:10px">aFRR dominates post-BRELL. Pre-2025, mFRR and DA were primary revenue drivers.</p>
+    </div>
+</div>
+
 <!-- ========== DA PRICES ========== -->
-<div class="section-divider"><h2>1. Day-Ahead Electricity Prices</h2></div>
+<div class="section-divider"><h2>2. Day-Ahead Electricity Prices</h2></div>
 
 <div class="grid">
     <div class="card">
@@ -721,30 +767,8 @@ html += f"""        </table>
 <div class="section-divider"><h2>5. BESS Market Saturation Analysis</h2></div>
 
 <div class="grid">
-    <div class="card card-full">
-        <div class="highlight-box">
-            <h3 style="color:#856404; margin-top:0;">Window of Opportunity: 2025—2027</h3>
-            <p>Projects operational by 2026-2027 capture peak revenues of ~€110-120/kW/yr. After 2028, expect 20-35% revenue compression from increased competition and price spread narrowing.</p>
-        </div>
-    </div>
-</div>
-
-<div class="grid">
     <div class="card">
-        <h2>BESS Revenue Potential (EUR/kW/yr, 2h system)</h2>
-        <table>
-            <tr><th>Stream</th><th>2024</th><th>2025</th><th>2026E</th><th>2027E</th><th>2028E</th><th>2030E</th></tr>
-            <tr><td>DA Arbitrage</td><td>35</td><td>30</td><td>28</td><td>25</td><td>22</td><td>18</td></tr>
-            <tr><td>Intra-Day</td><td>15</td><td>18</td><td>20</td><td>22</td><td>20</td><td>16</td></tr>
-            <tr><td>aFRR Capacity</td><td>25</td><td>30</td><td>35</td><td>32</td><td>28</td><td>22</td></tr>
-            <tr><td>aFRR Energy</td><td>8</td><td>10</td><td>12</td><td>11</td><td>10</td><td>8</td></tr>
-            <tr><td>mFRR / Balancing</td><td>5</td><td>8</td><td>10</td><td>10</td><td>9</td><td>7</td></tr>
-            <tr><td>Imbalance Optim</td><td>10</td><td>12</td><td>15</td><td>14</td><td>12</td><td>8</td></tr>
-            <tr style="font-weight:bold; background:#D4EDDA"><td>TOTAL</td><td>98</td><td>108</td><td>120</td><td>114</td><td>101</td><td>79</td></tr>
-        </table>
-    </div>
-    <div class="card">
-        <h2>Saturation Indicators</h2>
+        <h2>Revenue vs Saturation</h2>
         <div id="chart_saturation" class="chart" style="min-height:380px"></div>
     </div>
 </div>
@@ -874,6 +898,47 @@ const colors = {{
     solar: '#FFC000', red: '#C00000', purple: '#7B2D8E',
     orange: '#ED7D31', gray: '#A5A5A5'
 }};
+
+// ==================== 0. REVENUE STACKED BAR ====================
+(() => {{
+    const years = ['2024', '2025', '2026E', '2027E', '2028E', '2029E', '2030E'];
+    const da =        [23, 27, 23, 19, 16, 16, 14];
+    const afrr =      [6, 334, 218, 148, 118, 103, 98];
+    const fcr =       [0, 52, 39, 31, 26, 22, 18];
+    const mfrr =      [31, 144, 95, 64, 51, 44, 43];
+    const imbalance = [15, 15, 12, 10, 9, 9, 9];
+
+    Plotly.newPlot('chart_revenue_stacked', [
+        {{x: years, y: da, name: 'DA Arbitrage', type: 'bar',
+         marker: {{color: '#2E75B6'}}, hovertemplate: 'DA: %{{y}} EUR/kW/yr<extra></extra>'}},
+        {{x: years, y: afrr, name: 'aFRR', type: 'bar',
+         marker: {{color: '#70AD47'}}, hovertemplate: 'aFRR: %{{y}} EUR/kW/yr<extra></extra>'}},
+        {{x: years, y: fcr, name: 'FCR', type: 'bar',
+         marker: {{color: '#FFC000'}}, hovertemplate: 'FCR: %{{y}} EUR/kW/yr<extra></extra>'}},
+        {{x: years, y: mfrr, name: 'mFRR', type: 'bar',
+         marker: {{color: '#ED7D31'}}, hovertemplate: 'mFRR: %{{y}} EUR/kW/yr<extra></extra>'}},
+        {{x: years, y: imbalance, name: 'Imbalance', type: 'bar',
+         marker: {{color: '#7B2D8E'}}, hovertemplate: 'Imbalance: %{{y}} EUR/kW/yr<extra></extra>'}}
+    ], {{
+        title: {{text: 'Revenue by Market Source — 2h BESS (EUR/kW/yr)', font: {{size: 16}}}},
+        xaxis: {{type: 'category'}},
+        yaxis: {{title: 'EUR/kW/yr', gridcolor: '#E0E0E0'}},
+        barmode: 'stack',
+        plot_bgcolor: 'white', paper_bgcolor: 'white',
+        legend: {{orientation: 'h', y: -0.18, x: 0.5, xanchor: 'center'}},
+        margin: {{t: 50, b: 70, l: 60, r: 20}},
+        annotations: [
+            {{x: '2025', y: 572, text: '<b>€572/kW/yr</b>', showarrow: true,
+             arrowhead: 0, ay: -30, font: {{size: 13, color: '#1F4E79'}}}},
+            {{x: '2030E', y: 182, text: '<b>€182/kW/yr</b>', showarrow: true,
+             arrowhead: 0, ay: -30, font: {{size: 12, color: '#C00000'}}}},
+            {{x: '2024', y: 75, text: 'Pre-BRELL', showarrow: false,
+             yshift: 15, font: {{size: 10, color: '#666'}}}},
+        ],
+        shapes: [{{type: 'line', x0: 0.5, x1: 0.5, y0: 0, y1: 620,
+                  line: {{color: '#C00000', width: 2, dash: 'dash'}}}}],
+    }}, plotlyConfig);
+}})();
 
 // ==================== 1. SPREAD CHART ====================
 (() => {{
@@ -1020,7 +1085,7 @@ const colors = {{
 (() => {{
     Plotly.newPlot('chart_saturation', [
         {{x: yearsCap, y: bessRevenue, name: 'Revenue (EUR/kW/yr)', type: 'bar',
-          marker: {{color: yearsCap.map((y,i) => bessRevenue[i] > 100 ? colors.green : bessRevenue[i] > 80 ? colors.solar : colors.red)}}}},
+          marker: {{color: yearsCap.map((y,i) => bessRevenue[i] > 300 ? colors.green : bessRevenue[i] > 200 ? colors.solar : colors.red)}}}},
         {{x: yearsCap, y: bessSatPct, name: 'BESS/Peak Demand (%)', type: 'scatter', mode: 'lines+markers',
           line: {{color: colors.red, width: 3}}, marker: {{size: 8}}, yaxis: 'y2'}}
     ], {{
@@ -1029,9 +1094,9 @@ const colors = {{
         yaxis2: {{title: 'BESS/Peak %', overlaying: 'y', side: 'right', gridcolor: 'transparent'}},
         plot_bgcolor: 'white', paper_bgcolor: 'white',
         legend: {{orientation: 'h', y: -0.15}}, margin: {{t: 40, b: 50}},
-        shapes: [{{type: 'rect', x0: 2024.5, x1: 2027.5, y0: 0, y1: 130,
+        shapes: [{{type: 'rect', x0: 2024.5, x1: 2027.5, y0: 0, y1: 620,
                    fillcolor: 'rgba(112,173,71,0.1)', line: {{width: 0}}}}],
-        annotations: [{{x: 2026, y: 125, text: 'Golden Window', showarrow: false,
+        annotations: [{{x: 2026, y: 590, text: 'Golden Window', showarrow: false,
                         font: {{color: colors.green, size: 13, bold: true}}}}]
     }}, plotlyConfig);
 }})();
