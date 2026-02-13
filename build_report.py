@@ -901,12 +901,12 @@ const colors = {{
 
 // ==================== 0. REVENUE STACKED BAR ====================
 (() => {{
-    const years = ['2024', '2025', '2026E', '2027E', '2028E', '2029E', '2030E'];
-    const da =        [23, 27, 23, 19, 16, 16, 14];
-    const afrr =      [6, 334, 218, 148, 118, 103, 98];
-    const fcr =       [0, 52, 39, 31, 26, 22, 18];
-    const mfrr =      [31, 144, 95, 64, 51, 44, 43];
-    const imbalance = [15, 15, 12, 10, 9, 9, 9];
+    const years = ['2024', '2025', '2026E', '2027E', '2028E', '2029E', '2030E', '2031E', '2032E'];
+    const da =        [23, 27, 23, 19, 16, 16, 14, 0, 0];
+    const afrr =      [6, 334, 218, 148, 118, 103, 98, 0, 0];
+    const fcr =       [0, 52, 39, 31, 26, 22, 18, 0, 0];
+    const mfrr =      [31, 144, 95, 64, 51, 44, 43, 0, 0];
+    const imbalance = [15, 15, 12, 10, 9, 9, 9, 0, 0];
 
     Plotly.newPlot('chart_revenue_stacked', [
         {{x: years, y: da, name: 'DA Arbitrage', type: 'bar',
@@ -921,7 +921,7 @@ const colors = {{
          marker: {{color: '#7B2D8E'}}, hovertemplate: 'Imbalance: %{{y}} EUR/kW/yr<extra></extra>'}}
     ], {{
         title: {{text: 'Revenue by Market Source — 2h BESS (EUR/kW/yr)', font: {{size: 16}}}},
-        xaxis: {{type: 'category'}},
+        xaxis: {{type: 'category', range: [-0.5, 8.5]}},
         yaxis: {{title: 'EUR/kW/yr', gridcolor: '#E0E0E0'}},
         barmode: 'stack',
         plot_bgcolor: 'white', paper_bgcolor: 'white',
